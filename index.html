@@ -3,21 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Qnexus - Simple Frontend</title>
+  <title>Qnexus - Login & Register</title>
   <style>
     :root{--bg:#0f1724;--card:#0b1220;--accent:#10b981;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial; background:linear-gradient(180deg,#071022 0%, #071827 100%);color:#e6eef8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial;
+      background:linear-gradient(180deg,#071022 0%, #071827 100%);
+      color:#e6eef8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
     .wrap{width:100%;max-width:980px;display:grid;grid-template-columns:1fr 380px;gap:24px}
-    .card{background:var(--card);padding:20px;border-radius:12px;box-shadow:0 6px 24px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .card{background:var(--card);padding:20px;border-radius:12px;box-shadow:0 6px 24px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03)}
     h1{margin:0 0 12px;font-size:20px}
     p.lead{margin:0 0 18px;color:var(--muted)}
     form .row{display:flex;gap:10px}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type=text], input[type=password], input[type=email]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+    input[type=text], input[type=password], input[type=email]{width:100%;padding:10px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
     button{background:var(--accent);border:none;color:#042014;padding:10px 12px;border-radius:8px;font-weight:600;cursor:pointer}
     button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
     .muted{color:var(--muted);font-size:13px}
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tabs button{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);
+      background:transparent;color:var(--muted);cursor:pointer;font-weight:600}
+    .tabs button.active{background:var(--accent);color:#042014}
     .users-list{margin-top:12px}
     table{width:100%;border-collapse:collapse}
     th,td{padding:8px 10px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:14px}
@@ -33,33 +41,53 @@
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>Qnexus — Register</h1>
-      <p class="lead">Create a user by calling your FastAPI backend at <code>0.0.0.0:4000</code>.</p>
+      <div class="tabs">
+        <button id="tabRegister" class="active">Register</button>
+        <button id="tabLogin">Login</button>
+      </div>
 
+      <!-- Register Form -->
       <form id="registerForm">
+        <h1>Register</h1>
         <div style="margin-bottom:12px">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <label for="regEmail">Email</label>
+          <input id="regEmail" name="email" type="email" placeholder="you@example.com" required />
         </div>
         <div style="margin-bottom:12px">
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" placeholder="••••••••" required />
+          <label for="regPassword">Password</label>
+          <input id="regPassword" name="password" type="password" placeholder="••••••••" required />
         </div>
         <div style="margin-bottom:12px">
-          <label for="hospital">Hospital</label>
-          <input id="hospital" name="hospital" type="text" placeholder="Hospital name" required />
+          <label for="regHospital">Hospital</label>
+          <input id="regHospital" name="hospital" type="text" placeholder="Hospital name" required />
         </div>
-
         <div style="display:flex;gap:8px;align-items:center">
-          <button id="submitBtn" type="submit">Create user</button>
-          <button id="clearBtn" type="button" class="secondary">Clear</button>
+          <button type="submit">Create user</button>
+          <button type="button" id="clearBtn" class="secondary">Clear</button>
           <div class="muted" style="margin-left:auto">Status: <span id="status">idle</span></div>
+        </div>
+      </form>
+
+      <!-- Login Form -->
+      <form id="loginForm" style="display:none">
+        <h1>Login</h1>
+        <div style="margin-bottom:12px">
+          <label for="logEmail">Email</label>
+          <input id="logEmail" type="email" placeholder="you@example.com" required />
+        </div>
+        <div style="margin-bottom:12px">
+          <label for="logPassword">Password</label>
+          <input id="logPassword" type="password" placeholder="••••••••" required />
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="submit">Login</button>
+          <div class="muted" style="margin-left:auto">Status: <span id="loginStatus">idle</span></div>
         </div>
       </form>
 
       <div id="messageArea"></div>
 
-      <div class="users-list">
+      <div class="users-list" id="usersSection">
         <h2 style="font-size:16px;margin:16px 0 8px">Users</h2>
         <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
           <button id="refreshBtn" class="secondary">Refresh list</button>
@@ -71,130 +99,118 @@
     </div>
 
     <div class="card right">
-      <div>
-        <h1 style="font-size:16px;margin-bottom:4px">How to use</h1>
-        <p class="small">Save this file as <code>index.html</code> and open it in your browser. If you serve the file from a different origin, make sure your FastAPI app allows CORS.</p>
-      </div>
-
-      <div>
-        <h2 style="font-size:14px;margin-bottom:4px">Debug tips</h2>
-        <ul class="small">
-          <li>If requests fail, try changing <code>API_BASE</code> to <code>http://localhost:4000</code>.</li>
-          <li>If you get CORS errors, add CORS middleware to FastAPI (example below).</li>
-          <li>Make sure your FastAPI is running and accessible on port <code>4000</code>.</li>
-        </ul>
-      </div>
-
-      <div>
-        <h2 style="font-size:14px;margin-bottom:4px">FastAPI CORS snippet</h2>
-        <pre class="small" style="background:rgba(255,255,255,0.02);padding:8px;border-radius:6px">from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-  CORSMiddleware,
-  allow_origins=['*'],  # <-- in production, restrict this
-  allow_credentials=True,
-  allow_methods=['*'],
-  allow_headers=['*'],
-)
-</pre>
-      </div>
-
-      <div>
-        <h2 style="font-size:14px;margin-bottom:4px">Notes</h2>
-        <p class="small">Browsers often block <code>0.0.0.0</code> requests — if something doesn't work, try <code>http://localhost:4000</code> instead.</p>
-      </div>
+      <h1 style="font-size:16px;margin-bottom:4px">How to use</h1>
+      <p class="small">Switch between Register and Login tabs. Make sure your FastAPI backend is running on port <code>4000</code> with CORS enabled.</p>
     </div>
   </div>
 
   <script>
-    // API base - edit if needed
-    const API_BASE = 'http://0.0.0.0:4000'; // if this doesn't work, use http://localhost:4000
+    const API_BASE = 'http://192.168.1.100:4000'; // change if needed
 
-    const registerForm = document.getElementById('registerForm');
     const messageArea = document.getElementById('messageArea');
-    const usersTableWrap = document.getElementById('usersTableWrap');
     const statusSpan = document.getElementById('status');
+    const loginStatusSpan = document.getElementById('loginStatus');
+    const usersTableWrap = document.getElementById('usersTableWrap');
+    const usersSection = document.getElementById('usersSection');
 
     function setStatus(t){ statusSpan.textContent = t }
+    function setLoginStatus(t){ loginStatusSpan.textContent = t }
 
     function showMessage(text, type='success'){
       messageArea.innerHTML = '<div class="msg ' + (type==='error' ? 'error' : 'success') + '">' + text + '</div>';
     }
-
     function clearMessage(){ messageArea.innerHTML = '' }
 
-    async function postRegister(data){
+    // Register
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', async e => {
+      e.preventDefault(); clearMessage();
+      const data = {
+        email: document.getElementById('regEmail').value.trim(),
+        password: document.getElementById('regPassword').value,
+        hospital: document.getElementById('regHospital').value.trim()
+      };
+      if(!data.email || !data.password || !data.hospital){ showMessage('Please fill all fields', 'error'); return }
       setStatus('posting...');
-      try{
+      try {
         const res = await fetch(API_BASE + '/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify(data)
         });
-
         const json = await res.json();
-        if (!res.ok) throw new Error(json.detail || JSON.stringify(json));
-        showMessage('User created — id: ' + (json.user && json.user.id ? json.user.id : '(unknown)'), 'success');
-        await loadUsers();
-      }catch(err){
-        showMessage('Error: ' + err.message, 'error');
-        console.error(err);
-      }finally{ setStatus('idle') }
-    }
+        if(!res.ok) throw new Error(json.detail || 'Registration failed');
+        showMessage('User created successfully');
+        loadUsers();
+      } catch(err){ showMessage(err.message,'error') }
+      finally { setStatus('idle') }
+    });
 
+    document.getElementById('clearBtn').addEventListener('click', () => { registerForm.reset(); clearMessage(); });
+
+    // Login
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault(); clearMessage();
+      const data = {
+        email: document.getElementById('logEmail').value.trim(),
+        password: document.getElementById('logPassword').value,
+        hospital: "" // backend expects hospital field but we ignore it
+      };
+      if(!data.email || !data.password){ showMessage('Enter email and password', 'error'); return }
+      setLoginStatus('checking...');
+      try {
+        const res = await fetch(API_BASE + '/login', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if(!res.ok) throw new Error(json.detail || 'Login failed');
+        showMessage('Login successful — Welcome ' + json.user.email, 'success');
+      } catch(err){ showMessage(err.message,'error'); }
+      finally { setLoginStatus('idle'); }
+    });
+
+    // Load users
     async function loadUsers(){
       setStatus('loading users');
-      usersTableWrap.innerHTML = 'Loading...';
       try{
         const res = await fetch(API_BASE + '/users');
         const json = await res.json();
-        if (!res.ok) throw new Error(json.detail || JSON.stringify(json));
-
+        if(!res.ok) throw new Error(json.detail || JSON.stringify(json));
         const users = json.users || [];
         if(!users.length){ usersTableWrap.innerHTML = '<div class="small">No users yet</div>'; return }
-
         const table = document.createElement('table');
-        const thead = document.createElement('thead');
-        thead.innerHTML = '<tr><th>id</th><th>email</th><th>hospital</th></tr>';
-        table.appendChild(thead);
+        table.innerHTML = '<thead><tr><th>id</th><th>email</th><th>hospital</th></tr></thead>';
         const tbody = document.createElement('tbody');
-        users.forEach(u => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td>' + (u.id ?? '') + '</td>' +
-                         '<td>' + (u.email ?? '') + '</td>' +
-                         '<td>' + (u.hospital ?? '') + '</td>';
+        users.forEach(u=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`<td>${u.id}</td><td>${u.email}</td><td>${u.hospital}</td>`;
           tbody.appendChild(tr);
         });
         table.appendChild(tbody);
-        usersTableWrap.innerHTML = '';
+        usersTableWrap.innerHTML='';
         usersTableWrap.appendChild(table);
       }catch(err){
-        usersTableWrap.innerHTML = '<div class="msg error">Could not load users — ' + err.message + '</div>';
-        console.error(err);
-      }finally{ setStatus('idle') }
+        usersTableWrap.innerHTML='<div class="msg error">Error: '+err.message+'</div>';
+      }finally{ setStatus('idle'); }
     }
 
-    registerForm.addEventListener('submit', e => {
-      e.preventDefault();
-      clearMessage();
-      const data = {
-        email: document.getElementById('email').value.trim(),
-        password: document.getElementById('password').value,
-        hospital: document.getElementById('hospital').value.trim()
-      };
-      // basic client-side validation
-      if(!data.email || !data.password || !data.hospital){ showMessage('Please fill all fields', 'error'); return }
-      postRegister(data);
-    });
-
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      registerForm.reset(); clearMessage();
-    });
-
     document.getElementById('refreshBtn').addEventListener('click', loadUsers);
-
-    // initial load
     loadUsers();
+
+    // Tabs switch
+    const tabRegister = document.getElementById('tabRegister');
+    const tabLogin = document.getElementById('tabLogin');
+    tabRegister.addEventListener('click', ()=>{
+      tabRegister.classList.add('active'); tabLogin.classList.remove('active');
+      registerForm.style.display='block'; loginForm.style.display='none'; usersSection.style.display='block';
+      clearMessage();
+    });
+    tabLogin.addEventListener('click', ()=>{
+      tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+      registerForm.style.display='none'; loginForm.style.display='block'; usersSection.style.display='none';
+      clearMessage();
+    });
   </script>
 </body>
 </html>
